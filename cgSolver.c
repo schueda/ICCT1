@@ -80,6 +80,9 @@ int main(int argc, char *argv[]) {
 
     SL *sl = criaSL(n, k);
     imprimeSL(sl);
+    double *x = (double *) malloc(n * sizeof(double));
+    gradienteConjugado(sl, x, e, i);
+    free(x);
     destroiSL(sl);
 
     fclose(fp);
