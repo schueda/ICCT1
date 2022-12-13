@@ -60,12 +60,6 @@ void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     }
 }
 
-void copiaVetor(double *dest, double *orig, int n) {
-    for (int i = 0; i < n; i++) {
-        dest[i] = orig[i];
-    }
-}
-
 double multiplicaVetores(double *v1, double *v2, int n) {
     double soma = 0;
     for (int i = 0; i < n; i++) {
@@ -119,11 +113,25 @@ double calculaNormaEuclidiana(double *v, int n) {
     return sqrt(soma);
 }
 
-double calculaNormaMax(double *v, int n) {
+double calculaNormaMax(double *v1, double *v2, int n) {
     double max = 0.0;
+    double aux;
     for (int i = 0; i < n; i++) {
-        if (fabs(v[i]) > max) {
-            max = fabs(v[i]);
+        aux = fabs(v1[i] - v2[i]);
+        if (aux > max) {
+            max = aux;
+        }
+    }
+    return max;
+}
+
+double calculaNormaMaxRelativa(double *v1, double *v2, int n) {
+    double max = 0.0;
+    double aux;
+    for (int i = 0; i < n; i++) {
+        aux = fabs(v1[i] - v2[i]) / fabs(v1[i]);
+        if (aux > max) {
+            max = aux;
         }
     }
     return max;

@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    if (p == -1) {
+    if (p <= -1) {
         fprintf(stderr, "A flag obrigatória -p não foi passada.\n");
         exit(1);
     }
@@ -82,8 +82,13 @@ int main(int argc, char *argv[]) {
 
     SL *sl = criaSL(n, k);
     double *x = (double *) malloc(n * sizeof(double));
-    // gradienteConjugado(sl, x, e, i);
-    preCondicionado(sl, x, e, i);
+
+    if (p == 0) {
+        gradienteConjugado(sl, x, e, i);
+    } else {
+        preCondicionado(sl, x, e, i);
+    }
+
     free(x);
     destroiSL(sl);
 
