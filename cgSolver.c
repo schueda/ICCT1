@@ -79,9 +79,10 @@ int main(int argc, char *argv[]) {
     srand(20222);
 
     SL *sl = criaSL(n, k);
-    imprimeSL(sl);
+    // imprimeSL(sl);
     double *x = (double *) malloc(n * sizeof(double));
-    gradienteConjugado(sl, x, e, i);
+    // gradienteConjugado(sl, x, e, i);
+    preCondicionado(sl, x, e, i);
     free(x);
     destroiSL(sl);
 
