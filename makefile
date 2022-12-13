@@ -14,10 +14,11 @@
 $(PROG):  $(OBJS)
 	$(CC) -o $@ $^ $(LFLAGS)
 
-clean:
-	@rm -f *~ *.bak
 
-purge:   clean
+purge:
+	@rm -f *~ *.bak
 	@rm -f *.o core a.out
 	@rm -f $(PROG)
+
+clean: purge
 
