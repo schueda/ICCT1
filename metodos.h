@@ -4,9 +4,9 @@
 #include "sislin.h"
 
 // Resolve sistema linear pelo método do gradiente conjugado com pré condicionador
-void preCondicionado(SL *sl, double *x, double erro, int maxIt);
+void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp);
 
 // Resolve sistema linear pelo método do gradiente conjugado
-void gradienteConjugado(SL *sl, double *x, double erro, int maxIt);
+void gradienteConjugado(SL *sl, double *x, double erro, int maxIt, FILE *fp);
 
 #endif

@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 #include "utils.h"
 
-void imprimeVetor(double *v, int n) {
+void imprimeVetor(double *v, int n, FILE *fp) {
     for (int i = 0; i < n; i++) {
-        printf("%f ", v[i]);
+        fprintf(fp, "%f ", v[i]);
     }
-    printf("\n");
+    fprintf(fp, "\n");
 }
 
 void multiplicaDiagVetor(double *matrizDiag, double *v, double *dest, int n) {
@@ -135,4 +136,11 @@ double calculaNormaMaxRelativa(double *v1, double *v2, int n) {
         }
     }
     return max;
+}
+
+
+double timestamp(void) {
+    struct timespec tp;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &tp);
+    return((double)(tp.tv_sec + tp.tv_nsec*1.0e-9));
 }

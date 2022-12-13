@@ -4,10 +4,14 @@
 #include "metodos.h"
 #include "utils.h"
 
-void gradienteConjugado(SL *sl, double *x, double erro, int maxIt) {
+void gradienteConjugado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     int k = 0, tam_linha, offset, i, j;
 
     double alpha, beta;
+
+    double norma;
+
+    double timeStampI, timeStampF, timeSum = 0.0;
 
     double *xProx = (double *) malloc(sl->n * sizeof(double));
 
@@ -21,6 +25,7 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt) {
     memcpy(p, r, sl->n * sizeof(double));
 
     while (k < maxIt) {
+        timeStampI = timestamp();
         multiplicaMatrizVetor(sl, p, Ap);
 
         alpha = multiplicaVetores(r, r, sl->n) / multiplicaVetores(p, Ap, sl->n);
@@ -34,7 +39,6 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt) {
         if (calculaNormaMaxRelativa(xProx, x, sl->n) < erro) {
             break;
         }
-        memcpy(x, xProx, sl->n * sizeof(double));
 
         beta = multiplicaVetores(rProx, rProx, sl->n) / multiplicaVetores(r, r, sl->n);
 
@@ -42,9 +46,25 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt) {
         for (i = 0; i < sl->n; i++) {
             p[i] = r[i] + beta * p[i];
         }
+        
+        timeStampF = timestamp();
 
         k++;
+
+        fprintf(fp, "# iter %d: %.15g\n", k, calculaNormaMax(xProx, x, sl->n));
+        memcpy(x, xProx, sl->n * sizeof(double));
+
+        timeSum += timeStampF - timeStampI;
     }
+
+    timeStampI = timestamp();
+    norma = calculaNormaEuclidiana(r, sl->n);
+    timeStampF = timestamp();
+    fprintf(fp, "# residuo: %.15g\n", norma);
+
+    fprintf(fp, "# Tempo PC: %.15g\n", 0.0);
+    fprintf(fp, "# Tempo iter: %.15g\n", timeSum/k);
+    fprintf(fp, "# Tempo residuo: %.15g\n", timeStampF - timeStampI);
 
     free(r);
     free(p);
@@ -52,10 +72,14 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt) {
     free(rProx);
 }
 
-void preCondicionado(SL *sl, double *x, double erro, int maxIt) {
+void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     int k = 0, tam_linha, offset, i, j;
 
     double alpha, beta;
+
+    double norma;
+
+    double timeStampI, timeStampF, timeSum = 0.0, tempoPC;
 
     double *xProx = (double *) malloc(sl->n * sizeof(double));
 
@@ -69,12 +93,16 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt) {
 
     calculaResiduo(sl, x, r);
 
+    timeStampI = timestamp();
     calculaCInv(sl, cInv);
+    timeStampF = timestamp();
+    tempoPC = timeStampF - timeStampI;
 
     multiplicaDiagVetor(cInv, r, z, sl->n);
     memcpy(d, z, sl->n * sizeof(double));
 
     while (k < maxIt) {
+        timeStampI = timestamp();
         multiplicaMatrizVetor(sl, d, Ad);
 
         alpha = multiplicaVetores(z, r, sl->n) / multiplicaVetores(d, Ad, sl->n);
@@ -87,7 +115,6 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt) {
         if (calculaNormaMaxRelativa(xProx, x, sl->n) < erro) {
             break;
         }
-        memcpy(x, xProx, sl->n * sizeof(double));
 
         multiplicaDiagVetor(cInv, r, zProx, sl->n);
 
@@ -96,13 +123,28 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt) {
         for (i = 0; i < sl->n; i++) {
             d[i] = zProx[i] + beta * d[i];
         }
-        
+
         memcpy(r, rProx, sl->n * sizeof(double));
         memcpy(z, zProx, sl->n * sizeof(double));
-
+        
+        timeStampF = timestamp();
 
         k++;
+
+        fprintf(fp, "# iter %d: %.15g\n", k, calculaNormaMax(xProx, x, sl->n));
+        memcpy(x, xProx, sl->n * sizeof(double));
+
+        timeSum += timeStampF - timeStampI;
     }
+
+    timeStampI = timestamp();
+    norma = calculaNormaEuclidiana(r, sl->n);
+    timeStampF = timestamp();
+    fprintf(fp, "# residuo: %.15g\n", norma);
+
+    fprintf(fp, "# Tempo PC: %.15g\n", tempoPC);
+    fprintf(fp, "# Tempo iter: %.15g\n", timeSum/k);
+    fprintf(fp, "# Tempo residuo: %.15g\n", timeStampF - timeStampI);
 
     free(r);
     free(rProx);

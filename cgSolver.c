@@ -80,14 +80,22 @@ int main(int argc, char *argv[]) {
 
     srand(20222);
 
+    fprintf(fp, "# asm21 André Schueda Menezes \n");
+    fprintf(fp, "# mafd17 Marcus Augusto Ferreira Dudeque \n");
+    fprintf(fp, "#\n");
+
     SL *sl = criaSL(n, k);
     double *x = (double *) malloc(n * sizeof(double));
 
     if (p == 0) {
-        gradienteConjugado(sl, x, e, i);
+        gradienteConjugado(sl, x, e, i, fp);
     } else {
-        preCondicionado(sl, x, e, i);
+        preCondicionado(sl, x, e, i, fp);
     }
+
+    fprintf(fp, "#\n");
+    fprintf(fp, "%d\n", n);
+    imprimeVetor(x, n, fp);
 
     free(x);
     destroiSL(sl);

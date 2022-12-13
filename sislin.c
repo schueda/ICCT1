@@ -11,8 +11,7 @@
 
  \return Valor do elemento Aij
 */
-double generateRandomA( unsigned int i, unsigned int j, unsigned int k )
-{
+double generateRandomA(unsigned int i, unsigned int j, unsigned int k) {
     static double invRandMax = 1.0 / (double)RAND_MAX;
     return ( (i==j)?(double)(k<<1) : 1.0 )  * (double)rand() * invRandMax;
 }
@@ -23,8 +22,7 @@ double generateRandomA( unsigned int i, unsigned int j, unsigned int k )
 
  \return Valor do elemento Bi
  */
-double generateRandomB( unsigned int k )
-{
+double generateRandomB(unsigned int k) {
     static double invRandMax = 1.0 / (double)RAND_MAX;
     return (double)(k<<2) * (double)rand() * invRandMax;
 }

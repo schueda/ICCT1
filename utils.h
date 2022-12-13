@@ -3,7 +3,7 @@
 
 #include "sislin.h"
 
-void imprimeVetor(double *v, int n);
+void imprimeVetor(double *v, int n, FILE *fp);
 
 void multiplicaDiagVetor(double *matrizDiag, double *v, double *dest, int n);
 
@@ -21,5 +21,7 @@ void calculaResiduo(SL *sl, double *x, double *r);
 double calculaNormaEuclidiana(double *v, int n);
 double calculaNormaMax(double *v1, double *v2, int n);
 double calculaNormaMaxRelativa(double *v1, double *v2, int n);
+
+double timestamp(void);
 
 #endif
