@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "sislin.h"
+#include "utils.h"
+#include "metodos.h"
 
 int main(int argc, char *argv[]) {
     int c;
