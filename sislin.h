@@ -2,14 +2,18 @@
 #define __SISLIN_H__
 
 typedef struct {
-    double **linhas;
+    double **A;
     double *b;
     int n;
     int k;
 } SL;
 
-// Cria sistema linear
-SL *criaSL(int n, int k);
+// Aloca sistema linear
+SL *alocaSL(int n, int k);
+
+void populaSL(SL *sl);
+
+void copiaSL(SL *slDest, SL *slOrigin);
 
 // Imprime sistema linear
 void imprimeSL(SL *sl);

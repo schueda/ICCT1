@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 #include "sislin.h"
 
 /*!
@@ -28,59 +29,100 @@ double generateRandomB(unsigned int k) {
 }
 
 /*!
- \brief Função que gera e popula o sistema linear k-diagonal
+ \brief Função que aloca o sistema linear k-diagonal
  \param n Tamanho do sistema linear
  \param k Numero de diagonais da matriz A
 
  \return Ponteiro para o SL criado
  */
-SL *criaSL(int n, int k) {
-    int tam_linha = ceil((double) k/2);
-    int offset = 0;
+SL *alocaSL(int n, int k) {
     int i;
+    int tam_linha = ceil((double) k/2);
 
     SL *sl = (SL *) malloc(sizeof(SL));
     sl->n = n;
     sl->k = k;
-    sl->linhas = (double **) malloc(n * sizeof(double *));
+    sl->A = (double **) malloc(n * sizeof(double *));
+    sl->b = (double *) malloc(n * sizeof(double));
 
+    
+    for (i = 0; i < floor((double) k/2); i++) {
+        sl->A[i] = (double *) malloc(tam_linha * sizeof(double));
+        tam_linha++;
+    }
 
-    for (i = 0; i < floor(k/2); i++) {
-        sl->linhas[i] = (double *) malloc(tam_linha * sizeof(double));
+    for (i = floor((double) k/2); i < n - floor((double) k/2); i++) {
+        sl->A[i] = (double *) malloc(sl->k * sizeof(double));
+    }
 
+    tam_linha--;
+    for (i = n-floor((double) k/2); i < n; i++) {
+        sl->A[i] = (double *) malloc(tam_linha * sizeof(double));
+        tam_linha--;
+    }
+    
+    return sl;
+}
+
+void populaSL(SL *sl) {
+    int tam_linha = ceil((double) sl->k/2);
+    int offset = 0;
+    int i;
+
+    for (i = 0; i < floor(sl->k/2); i++) {
         for (int j = 0; j < tam_linha; j++) {
-            sl->linhas[i][j] = generateRandomA(i, j, k);
+            sl->A[i][j] = generateRandomA(i, j, sl->k);
         }
         tam_linha++;
     }
 
-    for (i = floor(k/2); i < n-floor(k/2); i++) {
-        sl->linhas[i] = (double *) malloc(k * sizeof(double));
-
-        for (int j = 0; j < k; j++) {
-            sl->linhas[i][j] = generateRandomA(i, j+offset, k);
+    for (i = floor(sl->k/2); i < sl->n-floor(sl->k/2); i++) {
+        for (int j = 0; j < sl->k; j++) {
+            sl->A[i][j] = generateRandomA(i, j+offset, sl->k);
         }
         offset++;
     }
 
     tam_linha--;
-    for (i=n-floor(k/2); i < n; i++) {
-        sl->linhas[i] = (double *) malloc(tam_linha * sizeof(double));
-
+    for (i = sl->n-floor(sl->k/2); i < sl->n; i++) {
         for (int j = 0; j < tam_linha; j++) {
-            sl->linhas[i][j] = generateRandomA(i, j+offset, k);
+            sl->A[i][j] = generateRandomA(i, j+offset, sl->k);
         }
-        tam_linha--;
         offset++;
+        tam_linha--;
     }
 
-    sl->b = (double *) malloc(n * sizeof(double));
-    for (int i = 0; i < n; i++) {
-        sl->b[i] = generateRandomB(k);
+    
+    for (int i = 0; i < sl->n; i++) {
+        sl->b[i] = generateRandomB(sl->k);
     }
-
-    return sl;
 }
+
+void copiaSL(SL *slDest, SL *slOrigin) {
+    int i;
+    int tam_linha = ceil((double) slOrigin->k/2);
+
+    slDest->n = slOrigin->n;
+    slDest->k = slOrigin->k;
+
+    for (i = 0; i < floor(slOrigin->k/2); i++) {
+        memcpy(slDest->A[i], slOrigin->A[i], tam_linha * sizeof(double));
+        tam_linha++;
+    }
+
+    for (i = floor(slOrigin->k/2); i < slOrigin->n-floor(slOrigin->k/2); i++) {
+        memcpy(slDest->A[i], slOrigin->A[i], slOrigin->k * sizeof(double));
+    }
+
+    tam_linha--;
+    for (i = slOrigin->n-floor(slOrigin->k/2); i < slOrigin->n; i++) {
+        memcpy(slDest->A[i], slOrigin->A[i], tam_linha * sizeof(double));
+        tam_linha--;
+    }
+
+    memcpy(slDest->b, slOrigin->b, slDest->n * sizeof(double));
+}
+
 
 /*!
  \brief Função que imprime o sistema linear k-diagonal
@@ -90,7 +132,7 @@ void imprimeSL(SL *sl) {
     int tam_linha = ceil((double) sl->k/2);
     for (int i = 0; i < floor(sl->k/2); i++) {
         for (int j = 0; j < tam_linha; j++) {
-            printf("%f ", sl->linhas[i][j]);
+            printf("%f ", sl->A[i][j]);
         }
         printf("\n");
         tam_linha++;
@@ -98,7 +140,7 @@ void imprimeSL(SL *sl) {
 
     for (int i = floor(sl->k/2); i < sl->n - floor(sl->k/2); i++) {
         for (int j = 0; j < sl->k; j++) {
-            printf("%f ", sl->linhas[i][j]);
+            printf("%f ", sl->A[i][j]);
         }
         printf("\n");
     }
@@ -106,7 +148,7 @@ void imprimeSL(SL *sl) {
     tam_linha--;
     for (int i = sl->n - floor(sl->k/2); i < sl->n; i++) {
         for (int j = 0; j < tam_linha; j++) {
-            printf("%f ", sl->linhas[i][j]);
+            printf("%f ", sl->A[i][j]);
         }
         printf("\n");
         tam_linha--;
@@ -126,10 +168,10 @@ void imprimeSL(SL *sl) {
  */
 void destroiSL(SL *sl) {
     for (int i = 0; i < sl->n; i++) {
-        free(sl->linhas[i]);
+        free(sl->A[i]);
     }
 
-    free(sl->linhas);
+    free(sl->A);
     free(sl->b);
     free(sl);
 }

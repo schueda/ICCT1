@@ -21,12 +21,12 @@ void calculaCInv(SL *sl, double *cInv) {
 
     int i;
     for (i = 0; i < floor(sl->k/2); i++) {
-        cInv[i] = 1/sl->linhas[i][posDiag];
+        cInv[i] = 1/sl->A[i][posDiag];
         posDiag++;
     }
 
     for (i = floor(sl->k/2); i < sl->n; i++) {
-        cInv[i] = 1/sl->linhas[i][posDiag];
+        cInv[i] = 1/sl->A[i][posDiag];
     }
 }
 
@@ -36,7 +36,7 @@ void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     for (i = 0; i < floor(sl->k/2); i++) {
         dest[i] = 0;
         for (j = 0; j < tam_linha; j++) {
-            dest[i] += sl->linhas[i][j] * v[j];
+            dest[i] += sl->A[i][j] * v[j];
         }
         tam_linha++;
     }
@@ -45,7 +45,7 @@ void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     for (i = floor(sl->k/2); i < sl->n - floor(sl->k/2); i++) {
         dest[i] = 0;
         for (j = 0; j < sl->k; j++) {
-            dest[i] += sl->linhas[i][j] * v[j+offset];
+            dest[i] += sl->A[i][j] * v[j+offset];
         }
         offset++;
     }
@@ -54,7 +54,7 @@ void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     for (i = sl->n - floor(sl->k/2); i < sl->n; i++) {
         dest[i] = 0;
         for (j = 0; j < tam_linha; j++) {
-            dest[i] += sl->linhas[i][j] * v[j+offset];
+            dest[i] += sl->A[i][j] * v[j+offset];
         }
         tam_linha--;
         offset++;
@@ -69,6 +69,50 @@ double multiplicaVetores(double *v1, double *v2, int n) {
     return soma;
 }
 
+double *itemNaMatriz(SL *sl, int i, int j) {
+    int offset;
+
+    if (i < floor(sl->k/2)) {
+        return &sl->A[i][j];
+    }
+
+    offset = i - floor(sl->k/2);
+    return &sl->A[i][j-offset];
+}
+
+void obtemMatrizTransposta(SL *sl) {
+    double *sup, *inf;
+
+    double aux;
+    int i, j;
+    int dec = 1;
+
+
+    for (i = 0; i < sl->n - floor(sl->k/2); i++) {
+        for (j = i + 1; j < i+1 + floor(sl->k/2); j++) {
+            sup = itemNaMatriz(sl, i, j);
+            inf = itemNaMatriz(sl, j, i);
+
+            aux = *sup;
+            *sup = *inf;
+            *inf = aux;
+        }
+    }
+
+    for (i = sl->n - floor(sl->k/2); i < sl->n; i++) {
+        for (j = i+1; j < i+1 + floor(sl->k/2) - dec; j++) {
+            sup = itemNaMatriz(sl, i, j);
+            inf = itemNaMatriz(sl, j, i);
+
+            aux = *sup;
+            *sup = *inf;
+            *inf = aux;
+        }
+        dec++;
+    }
+
+}
+
 /*!
  \brief Função que calcula o residuo de um sistema linear k-diagonal
  \param sl Sistema linear
@@ -81,7 +125,7 @@ void calculaResiduo(SL *sl, double *x, double *r) {
     for (i = 0; i < floor(sl->k/2); i++) {
         r[i] = sl->b[i];
         for (j = 0; j < tam_linha; j++) {
-            r[i] -= sl->linhas[i][j] * x[j];
+            r[i] -= sl->A[i][j] * x[j];
         }
         tam_linha++;
     }
@@ -90,7 +134,7 @@ void calculaResiduo(SL *sl, double *x, double *r) {
     for (i = floor(sl->k/2); i < sl->n - floor(sl->k/2); i++) {
         r[i] = sl->b[i];
         for (j = 0; j < sl->k; j++) {
-            r[i] -= sl->linhas[i][j] * x[j + offset];
+            r[i] -= sl->A[i][j] * x[j + offset];
         }
         offset++;
     }
@@ -99,7 +143,7 @@ void calculaResiduo(SL *sl, double *x, double *r) {
     for (i = sl->n - floor(sl->k/2); i < sl->n; i++) {
         r[i] = sl->b[i];
         for (j = 0; j < tam_linha; j++) {
-            r[i] -= sl->linhas[i][j] * x[j + offset];
+            r[i] -= sl->A[i][j] * x[j + offset];
         }
         tam_linha--;
         offset++;

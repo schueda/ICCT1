@@ -14,6 +14,7 @@ void multiplicaMatrizVetor(SL *sl, double *v, double *dest);
 
 double multiplicaVetores(double *v1, double *v2, int n);
 
+void obtemMatrizTransposta(SL *sl);
 
 void calculaResiduo(SL *sl, double *x, double *r);
 
