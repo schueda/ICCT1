@@ -80,13 +80,12 @@ int main(int argc, char *argv[]) {
 
     srand(20222);
 
-    // fprintf(fp, "# asm21 André Schueda Menezes \n");
-    // fprintf(fp, "# mafd17 Marcus Augusto Ferreira Dudeque \n");
-    // fprintf(fp, "#\n");
+    fprintf(fp, "# asm21 André Schueda Menezes \n");
+    fprintf(fp, "# mafd17 Marcus Augusto Ferreira Dudeque \n");
+    fprintf(fp, "#\n");
 
     SL *sl = alocaSL(n, k);
     populaSL(sl);
-    imprimeSL(sl);
     double *x = (double *) malloc(n * sizeof(double));
 
     SL *slT = alocaSL(n, k);
@@ -95,17 +94,17 @@ int main(int argc, char *argv[]) {
 
     obtemMatrizTransposta(slT);
 
-    imprimeSL(slT);
+    SL *slA = simetrizaSL(slT, sl);
 
-    // if (p == 0) {
-    //     gradienteConjugado(sl, x, e, i, fp);
-    // } else {
-    //     preCondicionado(sl, x, e, i, fp);
-    // }
+    if (p == 0) {
+        gradienteConjugado(slA, x, e, i, fp);
+    } else {
+        preCondicionado(slA, x, e, i, fp);
+    }
 
-    // fprintf(fp, "#\n");
-    // fprintf(fp, "%d\n", n);
-    // imprimeVetor(x, n, fp);
+    fprintf(fp, "#\n");
+    fprintf(fp, "%d\n", n);
+    imprimeVetor(x, n, fp);
 
     free(x);
     destroiSL(sl);

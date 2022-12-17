@@ -31,7 +31,7 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
         alpha = multiplicaVetores(r, r, sl->n) / multiplicaVetores(p, Ap, sl->n);
 
         for (i = 0; i < sl->n; i++) {
-            xProx[i] += alpha * p[i];
+            xProx[i] = x[i] + alpha * p[i];
             rProx[i] = r[i] - alpha * Ap[i];
         }
 
@@ -87,41 +87,41 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     double *rProx = (double *) malloc(sl->n * sizeof(double));
     double *z = (double *) malloc(sl->n * sizeof(double));
     double *zProx = (double *) malloc(sl->n * sizeof(double));
-    double *d = (double *) malloc(sl->n * sizeof(double));
-    double *Ad = (double *) malloc(sl->n * sizeof(double));
-    double *cInv = (double *) malloc(sl->n * sizeof(double));
+    double *p = (double *) malloc(sl->n * sizeof(double));
+    double *Ap = (double *) malloc(sl->n * sizeof(double));
+    double *mInv = (double *) malloc(sl->n * sizeof(double));
 
     calculaResiduo(sl, x, r);
 
     timeStampI = timestamp();
-    calculaCInv(sl, cInv);
+    calculaMInv(sl, mInv);
     timeStampF = timestamp();
     tempoPC = timeStampF - timeStampI;
 
-    multiplicaDiagVetor(cInv, r, z, sl->n);
-    memcpy(d, z, sl->n * sizeof(double));
+    multiplicaDiagVetor(mInv, r, z, sl->n);
+    memcpy(p, z, sl->n * sizeof(double));
 
     while (k < maxIt) {
         timeStampI = timestamp();
-        multiplicaMatrizVetor(sl, d, Ad);
+        multiplicaMatrizVetor(sl, p, Ap);
 
-        alpha = multiplicaVetores(z, r, sl->n) / multiplicaVetores(d, Ad, sl->n);
+        alpha = multiplicaVetores(r, z, sl->n) / multiplicaVetores(p, Ap, sl->n);
 
         for (i = 0; i < sl->n; i++) {
-            xProx[i] += alpha * d[i];
-            rProx[i] = r[i] - alpha * Ad[i];
+            xProx[i] = x[i] + alpha * p[i];
+            rProx[i] = r[i] - alpha * Ap[i];
         }
 
         if (calculaNormaMaxRelativa(xProx, x, sl->n) < erro) {
             break;
         }
 
-        multiplicaDiagVetor(cInv, r, zProx, sl->n);
+        multiplicaDiagVetor(mInv, rProx, zProx, sl->n);
 
-        beta = multiplicaVetores(zProx, rProx, sl->n) / multiplicaVetores(z, r, sl->n);
+        beta = multiplicaVetores(rProx, zProx, sl->n) / multiplicaVetores(r, z, sl->n);
 
         for (i = 0; i < sl->n; i++) {
-            d[i] = zProx[i] + beta * d[i];
+            p[i] = zProx[i] + beta * p[i];
         }
 
         memcpy(r, rProx, sl->n * sizeof(double));
@@ -150,7 +150,7 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     free(rProx);
     free(z);
     free(zProx);
-    free(d);
-    free(Ad);
-    free(cInv);
+    free(p);
+    free(Ap);
+    free(mInv);
 }

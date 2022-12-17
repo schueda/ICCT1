@@ -3,14 +3,19 @@
 
 #include "sislin.h"
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 void imprimeVetor(double *v, int n, FILE *fp);
+void imprimeVetorTeste(double *v, int n);
 
 void multiplicaDiagVetor(double *matrizDiag, double *v, double *dest, int n);
 
-void calculaCInv(SL *sl, double *cInv);
+void calculaMInv(SL *sl, double *cInv);
 
 void multiplicaMatrizVetor(SL *sl, double *v, double *dest);
 
+SL *simetrizaSL(SL *slA, SL *slB);
 
 double multiplicaVetores(double *v1, double *v2, int n);
 
