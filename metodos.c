@@ -83,15 +83,15 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
 
     double timeStampI, timeStampF, timeSum = 0.0, tempoPC;
 
-    double *xProx = (double *) malloc(sl->n * sizeof(double));
+    double *xProx = (double *) calloc(sl->n, sl->n * sizeof(double));
 
-    double *r = (double *) malloc(sl->n * sizeof(double));
-    double *rProx = (double *) malloc(sl->n * sizeof(double));
-    double *z = (double *) malloc(sl->n * sizeof(double));
-    double *zProx = (double *) malloc(sl->n * sizeof(double));
-    double *p = (double *) malloc(sl->n * sizeof(double));
-    double *Ap = (double *) malloc(sl->n * sizeof(double));
-    double *mInv = (double *) malloc(sl->n * sizeof(double));
+    double *r = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *rProx = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *z = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *zProx = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *p = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *Ap = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *mInv = (double *) calloc(sl->n, sl->n * sizeof(double));
 
     calculaResiduo(sl, x, r);
 
@@ -147,6 +147,8 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     fprintf(fp, "# Tempo PC: %.15g\n", tempoPC);
     fprintf(fp, "# Tempo iter: %.15g\n", timeSum/k);
     fprintf(fp, "# Tempo residuo: %.15g\n", timeStampF - timeStampI);
+
+    free(xProx);
 
     free(r);
     free(rProx);
