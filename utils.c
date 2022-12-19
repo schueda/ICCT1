@@ -28,12 +28,12 @@ void calculaMInv(SL *sl, double *cInv) {
     int posDiag = 0;
 
     int i;
-    for (i = 0; i < floor(sl->k/2); i++) {
+    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
         cInv[i] = 1/sl->A[i][posDiag];
         posDiag++;
     }
 
-    for (i = floor(sl->k/2); i < sl->n; i++) {
+    for (i = (int) floor((double) sl->k/2); i < sl->n; i++) {
         cInv[i] = 1/sl->A[i][posDiag];
     }
 }
@@ -46,7 +46,7 @@ double valorNaMatriz(SL *sl, int i, int j) {
     tam_linha = MIN(tam_linha, sl->n-1 - i + ceil((double) sl->k/2));
 
 
-    offset = MAX(i - floor(sl->k/2), 0);
+    offset = MAX(i - (int) floor((double) sl->k/2), 0);
 
     if (j - offset >= tam_linha) return 0;
 
@@ -72,7 +72,7 @@ SL *simetrizaSL(SL *slA, SL *slB) {
     tam_linha = ceil((double) slDest->k/2);
     tam_coluna = ceil((double) slB->k/2);
 
-    for (i = 0; i < floor(slDest->k/2); i++) {
+    for (i = 0; i < (int) floor((double) slDest->k/2); i++) {
         for (j = 0; j < tam_linha; j++) {
             obtemColuna(slB, j, 0, tam_coluna-1, col);
 
@@ -82,7 +82,7 @@ SL *simetrizaSL(SL *slA, SL *slB) {
         tam_coluna++;
     }
 
-    for (i = floor(slDest->k/2); i < slDest->n - floor(slDest->k/2); i++) {
+    for (i = (int) floor((double) slDest->k/2); i < slDest->n - (int) floor((double) slDest->k/2); i++) {
         offset = i - (int) floor((double) slA->k/2);
         for (j = 0; j < slDest->k; j++) {
             obtemColuna(slB, j + resultOffset, offset, offset + slA->k-1, col);
@@ -94,7 +94,7 @@ SL *simetrizaSL(SL *slA, SL *slB) {
 
     tam_linha--;
     tam_coluna--;
-    for (i = slDest->n - floor(slDest->k/2); i < slDest->n; i++) {
+    for (i = slDest->n - (int) floor((double) slDest->k/2); i < slDest->n; i++) {
         offset = i - (int) floor((double) slA->k/2);
         for (j = 0; j < tam_linha; j++) {
             obtemColuna(slB, j + resultOffset, offset, offset + tam_coluna-1, col);
@@ -155,11 +155,11 @@ double multiplicaVetores(double *v1, double *v2, int n) {
 double *itemNaMatriz(SL *sl, int i, int j) {
     int offset;
 
-    if (i < floor(sl->k/2)) {
+    if (i < (int) floor((double) sl->k/2)) {
         return &sl->A[i][j];
     }
 
-    offset = i - floor(sl->k/2);
+    offset = i - (int) floor((double) sl->k/2);
     return &sl->A[i][j-offset];
 }
 
@@ -171,8 +171,8 @@ void obtemMatrizTransposta(SL *sl) {
     int dec = 1;
 
 
-    for (i = 0; i < sl->n - floor(sl->k/2); i++) {
-        for (j = i + 1; j < i+1 + floor(sl->k/2); j++) {
+    for (i = 0; i < sl->n - (int) floor((double) sl->k/2); i++) {
+        for (j = i + 1; j < i+1 + (int) floor((double) sl->k/2); j++) {
             sup = itemNaMatriz(sl, i, j);
             inf = itemNaMatriz(sl, j, i);
 
@@ -182,8 +182,8 @@ void obtemMatrizTransposta(SL *sl) {
         }
     }
 
-    for (i = sl->n - floor(sl->k/2); i < sl->n; i++) {
-        for (j = i+1; j < i+1 + floor(sl->k/2) - dec; j++) {
+    for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
+        for (j = i+1; j < i+1 + (int) floor((double) sl->k/2) - dec; j++) {
             sup = itemNaMatriz(sl, i, j);
             inf = itemNaMatriz(sl, j, i);
 

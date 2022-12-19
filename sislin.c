@@ -46,17 +46,17 @@ SL *alocaSL(int n, int k) {
     sl->b = (double *) malloc(n * sizeof(double));
 
     
-    for (i = 0; i < floor((double) k/2); i++) {
+    for (i = 0; i < (int) floor((double) k/2); i++) {
         sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
         tam_linha++;
     }
 
-    for (i = floor((double) k/2); i < n - floor((double) k/2); i++) {
+    for (i = (int) floor((double) k/2); i < n - (int) floor((double) k/2); i++) {
         sl->A[i] = (double *) calloc(sl->k, sl->k * sizeof(double));
     }
 
     tam_linha--;
-    for (i = n-floor((double) k/2); i < n; i++) {
+    for (i = n-(int) floor((double) k/2); i < n; i++) {
         sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
         tam_linha--;
     }
@@ -69,14 +69,14 @@ void populaSL(SL *sl) {
     int offset = 0;
     int i;
 
-    for (i = 0; i < floor(sl->k/2); i++) {
+    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
         for (int j = 0; j < tam_linha; j++) {
             sl->A[i][j] = generateRandomA(i, j, sl->k);
         }
         tam_linha++;
     }
 
-    for (i = floor(sl->k/2); i < sl->n-floor(sl->k/2); i++) {
+    for (i = (int) floor((double) sl->k/2); i < sl->n-(int) floor((double) sl->k/2); i++) {
         for (int j = 0; j < sl->k; j++) {
             sl->A[i][j] = generateRandomA(i, j+offset, sl->k);
         }
@@ -84,7 +84,7 @@ void populaSL(SL *sl) {
     }
 
     tam_linha--;
-    for (i = sl->n-floor(sl->k/2); i < sl->n; i++) {
+    for (i = sl->n-(int) floor((double) sl->k/2); i < sl->n; i++) {
         for (int j = 0; j < tam_linha; j++) {
             sl->A[i][j] = generateRandomA(i, j+offset, sl->k);
         }
@@ -105,17 +105,17 @@ void copiaSL(SL *slDest, SL *slOrigin) {
     slDest->n = slOrigin->n;
     slDest->k = slOrigin->k;
 
-    for (i = 0; i < floor(slOrigin->k/2); i++) {
+    for (i = 0; i < (int) floor((double) slOrigin->k/2); i++) {
         memcpy(slDest->A[i], slOrigin->A[i], tam_linha * sizeof(double));
         tam_linha++;
     }
 
-    for (i = floor(slOrigin->k/2); i < slOrigin->n-floor(slOrigin->k/2); i++) {
+    for (i = (int) floor((double) slOrigin->k/2); i < slOrigin->n-(int) floor((double) slOrigin->k/2); i++) {
         memcpy(slDest->A[i], slOrigin->A[i], slOrigin->k * sizeof(double));
     }
 
     tam_linha--;
-    for (i = slOrigin->n-floor(slOrigin->k/2); i < slOrigin->n; i++) {
+    for (i = slOrigin->n-(int) floor((double) slOrigin->k/2); i < slOrigin->n; i++) {
         memcpy(slDest->A[i], slOrigin->A[i], tam_linha * sizeof(double));
         tam_linha--;
     }
@@ -130,7 +130,7 @@ void copiaSL(SL *slDest, SL *slOrigin) {
  */
 void imprimeSL(SL *sl) {
     int tam_linha = ceil((double) sl->k/2);
-    for (int i = 0; i < floor(sl->k/2); i++) {
+    for (int i = 0; i < (int) floor((double) sl->k/2); i++) {
         for (int j = 0; j < tam_linha; j++) {
             printf("%f ", sl->A[i][j]);
         }
@@ -138,7 +138,7 @@ void imprimeSL(SL *sl) {
         tam_linha++;
     }
 
-    for (int i = floor(sl->k/2); i < sl->n - floor(sl->k/2); i++) {
+    for (int i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
         for (int j = 0; j < sl->k; j++) {
             printf("%f ", sl->A[i][j]);
         }
@@ -146,7 +146,7 @@ void imprimeSL(SL *sl) {
     }
 
     tam_linha--;
-    for (int i = sl->n - floor(sl->k/2); i < sl->n; i++) {
+    for (int i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
         for (int j = 0; j < tam_linha; j++) {
             printf("%f ", sl->A[i][j]);
         }
