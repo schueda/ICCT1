@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
     SL *sl = alocaSL(n, k);
     populaSL(sl);
-    double *x = (double *) malloc(n * sizeof(double));
+    double *x = (double *) calloc(n, n * sizeof(double));
 
     SL *slT = alocaSL(n, k);
     
@@ -108,6 +108,8 @@ int main(int argc, char *argv[]) {
 
     free(x);
     destroiSL(sl);
+    destroiSL(slT);
+    destroiSL(slA);
 
     fclose(fp);
     return 0;

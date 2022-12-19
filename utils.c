@@ -116,7 +116,7 @@ SL *simetrizaSL(SL *slA, SL *slB) {
 void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     int tam_linha = ceil((double) sl->k/2);
     int i, j, offset;
-    for (i = 0; i < floor(sl->k/2); i++) {
+    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
         dest[i] = 0;
         for (j = 0; j < tam_linha; j++) {
             dest[i] += sl->A[i][j] * v[j];
@@ -125,7 +125,7 @@ void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     }
 
     offset = 0;
-    for (i = floor(sl->k/2); i < sl->n - floor(sl->k/2); i++) {
+    for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
         dest[i] = 0;
         for (j = 0; j < sl->k; j++) {
             dest[i] += sl->A[i][j] * v[j+offset];
@@ -134,7 +134,7 @@ void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     }
 
     tam_linha--;
-    for (i = sl->n - floor(sl->k/2); i < sl->n; i++) {
+    for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
         dest[i] = 0;
         for (j = 0; j < tam_linha; j++) {
             dest[i] += sl->A[i][j] * v[j+offset];
@@ -205,7 +205,7 @@ void obtemMatrizTransposta(SL *sl) {
 void calculaResiduo(SL *sl, double *x, double *r) {
     int tam_linha = ceil((double) sl->k/2), i, j, offset;
 
-    for (i = 0; i < floor(sl->k/2); i++) {
+    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
         r[i] = sl->b[i];
         for (j = 0; j < tam_linha; j++) {
             r[i] -= sl->A[i][j] * x[j];
@@ -214,7 +214,7 @@ void calculaResiduo(SL *sl, double *x, double *r) {
     }
 
     offset = 0;
-    for (i = floor(sl->k/2); i < sl->n - floor(sl->k/2); i++) {
+    for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
         r[i] = sl->b[i];
         for (j = 0; j < sl->k; j++) {
             r[i] -= sl->A[i][j] * x[j + offset];
@@ -223,7 +223,7 @@ void calculaResiduo(SL *sl, double *x, double *r) {
     }
 
     tam_linha--;
-    for (i = sl->n - floor(sl->k/2); i < sl->n; i++) {
+    for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
         r[i] = sl->b[i];
         for (j = 0; j < tam_linha; j++) {
             r[i] -= sl->A[i][j] * x[j + offset];

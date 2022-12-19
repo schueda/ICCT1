@@ -47,17 +47,17 @@ SL *alocaSL(int n, int k) {
 
     
     for (i = 0; i < floor((double) k/2); i++) {
-        sl->A[i] = (double *) malloc(tam_linha * sizeof(double));
+        sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
         tam_linha++;
     }
 
     for (i = floor((double) k/2); i < n - floor((double) k/2); i++) {
-        sl->A[i] = (double *) malloc(sl->k * sizeof(double));
+        sl->A[i] = (double *) calloc(sl->k, sl->k * sizeof(double));
     }
 
     tam_linha--;
     for (i = n-floor((double) k/2); i < n; i++) {
-        sl->A[i] = (double *) malloc(tam_linha * sizeof(double));
+        sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
         tam_linha--;
     }
     

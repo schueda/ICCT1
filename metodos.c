@@ -13,12 +13,12 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
 
     double timeStampI, timeStampF, timeSum = 0.0;
 
-    double *xProx = (double *) malloc(sl->n * sizeof(double));
+    double *xProx = (double *) calloc(sl->n, sl->n * sizeof(double));
 
-    double *r = (double *) malloc(sl->n * sizeof(double));
-    double *p = (double *) malloc(sl->n * sizeof(double));
-    double *Ap = (double *) malloc(sl->n * sizeof(double));
-    double *rProx = (double *) malloc(sl->n * sizeof(double));
+    double *r = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *p = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *Ap = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *rProx = (double *) calloc(sl->n, sl->n * sizeof(double));
 
     calculaResiduo(sl, x, r);
 
@@ -65,6 +65,8 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     fprintf(fp, "# Tempo PC: %.15g\n", 0.0);
     fprintf(fp, "# Tempo iter: %.15g\n", timeSum/k);
     fprintf(fp, "# Tempo residuo: %.15g\n", timeStampF - timeStampI);
+
+    free(xProx);
 
     free(r);
     free(p);
@@ -131,7 +133,7 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
 
         k++;
 
-        fprintf(fp, "# iter %d: %.15g\n", k, calculaNormaMax(xProx, x, sl->n));
+        fprintf(fp, "# iter %d: %.15g\n", k, calculaNormaMaxRelativa(xProx, x, sl->n));
         memcpy(x, xProx, sl->n * sizeof(double));
 
         timeSum += timeStampF - timeStampI;
