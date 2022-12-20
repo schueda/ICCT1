@@ -67,46 +67,45 @@ SL *simetrizaSL(SL *slA, SL *slB) {
     int offset, resultOffset = 0;
 
     SL *slDest = alocaSL(slA->n, slA->k + (int) 2 * floor((double) slA->k/2));
-    double *col = (double *) calloc(slB->k, slB->k * sizeof(double));
+    double *col = (double *) calloc(slB->k, sizeof(double));
 
     tam_linha = ceil((double) slDest->k/2);
     tam_coluna = ceil((double) slB->k/2);
 
-    for 
 
-    for (i = 0; i < (int) floor((double) slDest->k/2); i++) {
-        for (j = 0; j < tam_linha; j++) {
-            obtemColuna(slB, j, 0, tam_coluna-1, col);
+    // for (i = 0; i < (int) floor((double) slDest->k/2); i++) {
+    //     for (j = 0; j < tam_linha; j++) {
+    //         obtemColuna(slB, j, 0, tam_coluna-1, col);
 
-            slDest->A[i][j] = multiplicaVetores(slA->A[i], col, tam_linha);
-        }
-        tam_linha++;
-        tam_coluna++;
-    }
+    //         slDest->A[i][j] = multiplicaVetores(slA->A[i], col, tam_linha);
+    //     }
+    //     tam_linha++;
+    //     tam_coluna++;
+    // }
 
-    for (i = (int) floor((double) slDest->k/2); i < slDest->n - (int) floor((double) slDest->k/2); i++) {
-        offset = i - (int) floor((double) slA->k/2);
-        for (j = 0; j < slDest->k; j++) {
-            obtemColuna(slB, j + resultOffset, offset, offset + slA->k-1, col);
+    // for (i = (int) floor((double) slDest->k/2); i < slDest->n - (int) floor((double) slDest->k/2); i++) {
+    //     offset = i - (int) floor((double) slA->k/2);
+    //     for (j = 0; j < slDest->k; j++) {
+    //         obtemColuna(slB, j + resultOffset, offset, offset + slA->k-1, col);
 
-            slDest->A[i][j] = multiplicaVetores(slA->A[i], col, slA->k);
-        };
-        resultOffset++;
-    }
+    //         slDest->A[i][j] = multiplicaVetores(slA->A[i], col, slA->k);
+    //     };
+    //     resultOffset++;
+    // }
 
-    tam_linha--;
-    tam_coluna--;
-    for (i = slDest->n - (int) floor((double) slDest->k/2); i < slDest->n; i++) {
-        offset = i - (int) floor((double) slA->k/2);
-        for (j = 0; j < tam_linha; j++) {
-            obtemColuna(slB, j + resultOffset, offset, offset + tam_coluna-1, col);
+    // tam_linha--;
+    // tam_coluna--;
+    // for (i = slDest->n - (int) floor((double) slDest->k/2); i < slDest->n; i++) {
+    //     offset = i - (int) floor((double) slA->k/2);
+    //     for (j = 0; j < tam_linha; j++) {
+    //         obtemColuna(slB, j + resultOffset, offset, offset + tam_coluna-1, col);
 
-            slDest->A[i][j] = multiplicaVetores(slA->A[i], col, tam_coluna);
-        }
-        tam_linha--;
-        tam_coluna--;
-        resultOffset++;
-    }
+    //         slDest->A[i][j] = multiplicaVetores(slA->A[i], col, tam_coluna);
+    //     }
+    //     tam_linha--;
+    //     tam_coluna--;
+    //     resultOffset++;
+    // }
 
     multiplicaMatrizVetor(slA, slB->b, slDest->b);
 
