@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "sislin.h"
+#include "utils.h"
 
 /*!
  \brief Função que gera os coeficientes de um sistema linear k-diagonal
@@ -42,24 +43,8 @@ SL *alocaSL(int n, int k) {
     SL *sl = (SL *) malloc(sizeof(SL));
     sl->n = n;
     sl->k = k;
-    sl->A = (double **) malloc(n * sizeof(double *));
+    sl->A = (double *) calloc(n * k, n * k * sizeof(double *));
     sl->b = (double *) malloc(n * sizeof(double));
-
-    
-    for (i = 0; i < (int) floor((double) k/2); i++) {
-        sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
-        tam_linha++;
-    }
-
-    for (i = (int) floor((double) k/2); i < n - (int) floor((double) k/2); i++) {
-        sl->A[i] = (double *) calloc(sl->k, sl->k * sizeof(double));
-    }
-
-    tam_linha--;
-    for (i = n-(int) floor((double) k/2); i < n; i++) {
-        sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
-        tam_linha--;
-    }
     
     return sl;
 }
@@ -67,31 +52,18 @@ SL *alocaSL(int n, int k) {
 void populaSL(SL *sl) {
     int tam_linha = ceil((double) sl->k/2);
     int offset = 0;
-    int i;
+    int i, j;
 
-    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
-        for (int j = 0; j < tam_linha; j++) {
-            sl->A[i][j] = generateRandomA(i, j, sl->k);
+    for (i = 0; i < sl->n; i++) {
+        tam_linha = MIN(tam_linha + i, sl->k);
+        tam_linha = MIN(tam_linha, sl->n-1 - i + ceil((double) sl->k/2));
+
+        offset = MAX(0, i - (int) floor((double) sl->k/2));
+
+        for (j = 0; j < tam_linha; j++) {
+            sl->A[i*sl->k + j] = generateRandomA(i, j + offset, sl->k);
         }
-        tam_linha++;
     }
-
-    for (i = (int) floor((double) sl->k/2); i < sl->n-(int) floor((double) sl->k/2); i++) {
-        for (int j = 0; j < sl->k; j++) {
-            sl->A[i][j] = generateRandomA(i, j+offset, sl->k);
-        }
-        offset++;
-    }
-
-    tam_linha--;
-    for (i = sl->n-(int) floor((double) sl->k/2); i < sl->n; i++) {
-        for (int j = 0; j < tam_linha; j++) {
-            sl->A[i][j] = generateRandomA(i, j+offset, sl->k);
-        }
-        offset++;
-        tam_linha--;
-    }
-
     
     for (int i = 0; i < sl->n; i++) {
         sl->b[i] = generateRandomB(sl->k);
@@ -99,27 +71,10 @@ void populaSL(SL *sl) {
 }
 
 void copiaSL(SL *slDest, SL *slOrigin) {
-    int i;
-    int tam_linha = ceil((double) slOrigin->k/2);
-
     slDest->n = slOrigin->n;
     slDest->k = slOrigin->k;
 
-    for (i = 0; i < (int) floor((double) slOrigin->k/2); i++) {
-        memcpy(slDest->A[i], slOrigin->A[i], tam_linha * sizeof(double));
-        tam_linha++;
-    }
-
-    for (i = (int) floor((double) slOrigin->k/2); i < slOrigin->n-(int) floor((double) slOrigin->k/2); i++) {
-        memcpy(slDest->A[i], slOrigin->A[i], slOrigin->k * sizeof(double));
-    }
-
-    tam_linha--;
-    for (i = slOrigin->n-(int) floor((double) slOrigin->k/2); i < slOrigin->n; i++) {
-        memcpy(slDest->A[i], slOrigin->A[i], tam_linha * sizeof(double));
-        tam_linha--;
-    }
-
+    memcpy(slDest->A, slOrigin->A, slDest->n * slDest->k * sizeof(double));
     memcpy(slDest->b, slOrigin->b, slDest->n * sizeof(double));
 }
 
@@ -129,37 +84,18 @@ void copiaSL(SL *slDest, SL *slOrigin) {
  \param sl Ponteiro para o SL a ser impresso
  */
 void imprimeSL(SL *sl) {
-    int tam_linha = ceil((double) sl->k/2);
-    for (int i = 0; i < (int) floor((double) sl->k/2); i++) {
-        for (int j = 0; j < tam_linha; j++) {
-            printf("%f ", sl->A[i][j]);
-        }
-        printf("\n");
-        tam_linha++;
-    }
-
-    for (int i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
+    for (int i = 0; i < sl->n; i++) {
         for (int j = 0; j < sl->k; j++) {
-            printf("%f ", sl->A[i][j]);
+            printf("%f ", sl->A[i*sl->k + j]);
         }
         printf("\n");
     }
 
-    tam_linha--;
-    for (int i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
-        for (int j = 0; j < tam_linha; j++) {
-            printf("%f ", sl->A[i][j]);
-        }
-        printf("\n");
-        tam_linha--;
-    }
-
-    printf("\n");
     for (int i = 0; i < sl->n; i++) {
         printf("%f ", sl->b[i]);
     }
 
-    printf("\n");
+    printf("\n\n");
 }
 
 /*!
@@ -167,10 +103,6 @@ void imprimeSL(SL *sl) {
  \param sl Ponteiro para o SL a ser desalocado
  */
 void destroiSL(SL *sl) {
-    for (int i = 0; i < sl->n; i++) {
-        free(sl->A[i]);
-    }
-
     free(sl->A);
     free(sl->b);
     free(sl);

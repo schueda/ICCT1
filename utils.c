@@ -28,14 +28,14 @@ void calculaMInv(SL *sl, double *cInv) {
     int posDiag = 0;
 
     int i;
-    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
-        cInv[i] = 1/sl->A[i][posDiag];
-        posDiag++;
-    }
+    // for (i = 0; i < (int) floor((double) sl->k/2); i++) {
+    //     cInv[i] = 1/sl->A[i][posDiag];
+    //     posDiag++;
+    // }
 
-    for (i = (int) floor((double) sl->k/2); i < sl->n; i++) {
-        cInv[i] = 1/sl->A[i][posDiag];
-    }
+    // for (i = (int) floor((double) sl->k/2); i < sl->n; i++) {
+    //     cInv[i] = 1/sl->A[i][posDiag];
+    // }
 }
 
 double valorNaMatriz(SL *sl, int i, int j) {
@@ -52,7 +52,7 @@ double valorNaMatriz(SL *sl, int i, int j) {
 
     if (j - offset < 0) return 0;
 
-    return sl->A[i][j-offset];
+    // return sl->A[i][j-offset];
 }
 
 void obtemColuna(SL *sl, int j, int ini, int fim, double *dest) {
@@ -71,6 +71,8 @@ SL *simetrizaSL(SL *slA, SL *slB) {
 
     tam_linha = ceil((double) slDest->k/2);
     tam_coluna = ceil((double) slB->k/2);
+
+    for 
 
     for (i = 0; i < (int) floor((double) slDest->k/2); i++) {
         for (j = 0; j < tam_linha; j++) {
@@ -116,32 +118,32 @@ SL *simetrizaSL(SL *slA, SL *slB) {
 void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
     int tam_linha = ceil((double) sl->k/2);
     int i, j, offset;
-    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
-        dest[i] = 0;
-        for (j = 0; j < tam_linha; j++) {
-            dest[i] += sl->A[i][j] * v[j];
-        }
-        tam_linha++;
-    }
+    // for (i = 0; i < (int) floor((double) sl->k/2); i++) {
+    //     dest[i] = 0;
+    //     for (j = 0; j < tam_linha; j++) {
+    //         dest[i] += sl->A[i][j] * v[j];
+    //     }
+    //     tam_linha++;
+    // }
 
-    offset = 0;
-    for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
-        dest[i] = 0;
-        for (j = 0; j < sl->k; j++) {
-            dest[i] += sl->A[i][j] * v[j+offset];
-        }
-        offset++;
-    }
+    // offset = 0;
+    // for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
+    //     dest[i] = 0;
+    //     for (j = 0; j < sl->k; j++) {
+    //         dest[i] += sl->A[i][j] * v[j+offset];
+    //     }
+    //     offset++;
+    // }
 
-    tam_linha--;
-    for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
-        dest[i] = 0;
-        for (j = 0; j < tam_linha; j++) {
-            dest[i] += sl->A[i][j] * v[j+offset];
-        }
-        tam_linha--;
-        offset++;
-    }
+    // tam_linha--;
+    // for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
+    //     dest[i] = 0;
+    //     for (j = 0; j < tam_linha; j++) {
+    //         dest[i] += sl->A[i][j] * v[j+offset];
+    //     }
+    //     tam_linha--;
+    //     offset++;
+    // }
 }
 
 double multiplicaVetores(double *v1, double *v2, int n) {
@@ -156,11 +158,11 @@ double *itemNaMatriz(SL *sl, int i, int j) {
     int offset;
 
     if (i < (int) floor((double) sl->k/2)) {
-        return &sl->A[i][j];
+        return &sl->A[i*sl->k + j];
     }
 
     offset = i - (int) floor((double) sl->k/2);
-    return &sl->A[i][j-offset];
+    return &sl->A[i*sl->k + j-offset];
 }
 
 void obtemMatrizTransposta(SL *sl) {
@@ -205,32 +207,32 @@ void obtemMatrizTransposta(SL *sl) {
 void calculaResiduo(SL *sl, double *x, double *r) {
     int tam_linha = ceil((double) sl->k/2), i, j, offset;
 
-    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
-        r[i] = sl->b[i];
-        for (j = 0; j < tam_linha; j++) {
-            r[i] -= sl->A[i][j] * x[j];
-        }
-        tam_linha++;
-    }
+    // for (i = 0; i < (int) floor((double) sl->k/2); i++) {
+    //     r[i] = sl->b[i];
+    //     for (j = 0; j < tam_linha; j++) {
+    //         r[i] -= sl->A[i][j] * x[j];
+    //     }
+    //     tam_linha++;
+    // }
 
-    offset = 0;
-    for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
-        r[i] = sl->b[i];
-        for (j = 0; j < sl->k; j++) {
-            r[i] -= sl->A[i][j] * x[j + offset];
-        }
-        offset++;
-    }
+    // offset = 0;
+    // for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
+    //     r[i] = sl->b[i];
+    //     for (j = 0; j < sl->k; j++) {
+    //         r[i] -= sl->A[i][j] * x[j + offset];
+    //     }
+    //     offset++;
+    // }
 
-    tam_linha--;
-    for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
-        r[i] = sl->b[i];
-        for (j = 0; j < tam_linha; j++) {
-            r[i] -= sl->A[i][j] * x[j + offset];
-        }
-        tam_linha--;
-        offset++;
-    }
+    // tam_linha--;
+    // for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
+    //     r[i] = sl->b[i];
+    //     for (j = 0; j < tam_linha; j++) {
+    //         r[i] -= sl->A[i][j] * x[j + offset];
+    //     }
+    //     tam_linha--;
+    //     offset++;
+    // }
 }
 
 double calculaNormaEuclidiana(double *v, int n) {

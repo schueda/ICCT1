@@ -2,7 +2,7 @@
 #define __SISLIN_H__
 
 typedef struct {
-    double **A;
+    double *A;
     double *b;
     int n;
     int k;

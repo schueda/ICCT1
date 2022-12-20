@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
 
     SL *sl = alocaSL(n, k);
     populaSL(sl);
+    imprimeSL(sl);
     double *x = (double *) calloc(n, n * sizeof(double));
 
     SL *slT = alocaSL(n, k);
@@ -94,22 +95,24 @@ int main(int argc, char *argv[]) {
 
     obtemMatrizTransposta(slT);
 
+    imprimeSL(slT);
+
     SL *slA = simetrizaSL(slT, sl);
 
-    if (p == 0) {
-        gradienteConjugado(slA, x, e, i, fp);
-    } else {
-        preCondicionado(slA, x, e, i, fp);
-    }
+    // if (p == 0) {
+    //     gradienteConjugado(slA, x, e, i, fp);
+    // } else {
+    //     preCondicionado(slA, x, e, i, fp);
+    // }
 
-    fprintf(fp, "#\n");
-    fprintf(fp, "%d\n", n);
-    imprimeVetor(x, n, fp);
+    // fprintf(fp, "#\n");
+    // fprintf(fp, "%d\n", n);
+    // imprimeVetor(x, n, fp);
 
     free(x);
     destroiSL(sl);
     destroiSL(slT);
-    destroiSL(slA);
+    // destroiSL(slA);
 
     fclose(fp);
     return 0;
