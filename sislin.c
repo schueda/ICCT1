@@ -47,17 +47,17 @@ SL *alocaSL(int n, int k) {
 
     
     for (i = 0; i < (int) floor((double) k/2); i++) {
-        sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
+        sl->A[i] = (double *) calloc(tam_linha, sizeof(double));
         tam_linha++;
     }
 
     for (i = (int) floor((double) k/2); i < n - (int) floor((double) k/2); i++) {
-        sl->A[i] = (double *) calloc(sl->k, sl->k * sizeof(double));
+        sl->A[i] = (double *) calloc(sl->k, sizeof(double));
     }
 
     tam_linha--;
     for (i = n-(int) floor((double) k/2); i < n; i++) {
-        sl->A[i] = (double *) calloc(tam_linha, tam_linha * sizeof(double));
+        sl->A[i] = (double *) calloc(tam_linha, sizeof(double));
         tam_linha--;
     }
     
@@ -154,12 +154,11 @@ void imprimeSL(SL *sl) {
         tam_linha--;
     }
 
-    printf("\n");
     for (int i = 0; i < sl->n; i++) {
         printf("%f ", sl->b[i]);
     }
 
-    printf("\n");
+    printf("\n\n");
 }
 
 /*!

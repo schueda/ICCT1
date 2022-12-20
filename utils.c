@@ -67,7 +67,7 @@ SL *simetrizaSL(SL *slA, SL *slB) {
     int offset, resultOffset = 0;
 
     SL *slDest = alocaSL(slA->n, slA->k + (int) 2 * floor((double) slA->k/2));
-    double *col = (double *) calloc(slB->k, slB->k * sizeof(double));
+    double *col = (double *) calloc(slB->k, sizeof(double));
 
     tam_linha = ceil((double) slDest->k/2);
     tam_coluna = ceil((double) slB->k/2);

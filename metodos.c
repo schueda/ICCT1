@@ -13,12 +13,12 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
 
     double timeStampI, timeStampF, timeSum = 0.0;
 
-    double *xProx = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *xProx = (double *) calloc(sl->n, sizeof(double));
 
-    double *r = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *p = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *Ap = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *rProx = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *r = (double *) calloc(sl->n, sizeof(double));
+    double *p = (double *) calloc(sl->n, sizeof(double));
+    double *Ap = (double *) calloc(sl->n, sizeof(double));
+    double *rProx = (double *) calloc(sl->n, sizeof(double));
 
     calculaResiduo(sl, x, r);
 
@@ -83,15 +83,15 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
 
     double timeStampI, timeStampF, timeSum = 0.0, tempoPC;
 
-    double *xProx = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *xProx = (double *) calloc(sl->n, sizeof(double));
 
-    double *r = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *rProx = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *z = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *zProx = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *p = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *Ap = (double *) calloc(sl->n, sl->n * sizeof(double));
-    double *mInv = (double *) calloc(sl->n, sl->n * sizeof(double));
+    double *r = (double *) calloc(sl->n, sizeof(double));
+    double *rProx = (double *) calloc(sl->n, sizeof(double));
+    double *z = (double *) calloc(sl->n, sizeof(double));
+    double *zProx = (double *) calloc(sl->n, sizeof(double));
+    double *p = (double *) calloc(sl->n, sizeof(double));
+    double *Ap = (double *) calloc(sl->n, sizeof(double));
+    double *mInv = (double *) calloc(sl->n, sizeof(double));
 
     calculaResiduo(sl, x, r);
 

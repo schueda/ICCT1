@@ -86,15 +86,22 @@ int main(int argc, char *argv[]) {
 
     SL *sl = alocaSL(n, k);
     populaSL(sl);
-    double *x = (double *) calloc(n, n * sizeof(double));
+    double *x = (double *) calloc(n, sizeof(double));
+
+    imprimeSL(sl);
 
     SL *slT = alocaSL(n, k);
+
     
     copiaSL(slT, sl);
+    
+    imprimeSL(slT);
 
     obtemMatrizTransposta(slT);
 
     SL *slA = simetrizaSL(slT, sl);
+
+    imprimeSL(slA);
 
     if (p == 0) {
         gradienteConjugado(slA, x, e, i, fp);
