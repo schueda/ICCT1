@@ -1,3 +1,5 @@
+// Autores: André Schueda Menezes e Marcus Augusto Ferreira Dudeque
+
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
@@ -6,12 +8,12 @@
 #include "utils.h"
 
 /*!
- \brief Função que gera os coeficientes de um sistema linear k-diagonal
- \param i Coordenada i do elemento a ser calculado 0<=i
- \param j Coordenada j do elemento a ser calculado j<n
- \param k Numero de diagonais da matriz A
+ \brief Função que gera os coeficientes de um sistema linear k-diagonal.
+ \param i Coordenada i do elemento a ser calculado 0<=i.
+ \param j Coordenada j do elemento a ser calculado j<n.
+ \param k Numero de diagonais da matriz A.
 
- \return Valor do elemento Aij
+ \return Valor do elemento Aij.
 */
 double generateRandomA(unsigned int i, unsigned int j, unsigned int k) {
     static double invRandMax = 1.0 / (double)RAND_MAX;
@@ -19,23 +21,18 @@ double generateRandomA(unsigned int i, unsigned int j, unsigned int k) {
 }
 
 /*!
- \brief Função que gera os termos independentes de um sistema linear k-diagonal
- \param k Numero de diagonais da matriz A
+ \brief Função que gera os termos independentes de um sistema linear k-diagonal.
+ \param k Numero de diagonais da matriz A.
 
- \return Valor do elemento Bi
- */
+ \return Valor do elemento Bi.
+*/
 double generateRandomB(unsigned int k) {
     static double invRandMax = 1.0 / (double)RAND_MAX;
     return (double)(k<<2) * (double)rand() * invRandMax;
 }
 
-/*!
- \brief Função que aloca o sistema linear k-diagonal
- \param n Tamanho do sistema linear
- \param k Numero de diagonais da matriz A
 
- \return Ponteiro para o SL criado
- */
+
 SL *alocaSL(int n, int k) {
     int i;
     int tam_linha = ceil((double) k/2);
@@ -43,15 +40,16 @@ SL *alocaSL(int n, int k) {
     SL *sl = (SL *) malloc(sizeof(SL));
     sl->n = n;
     sl->k = k;
-    sl->A = (double *) calloc(n * k, n * k * sizeof(double *));
-    sl->b = (double *) malloc(n * sizeof(double));
+    sl->A = (double *) calloc(n * k, sizeof(double));
+    sl->b = (double *) calloc(n, sizeof(double));
     
     return sl;
 }
 
+
 void populaSL(SL *sl) {
     int tam_linha = ceil((double) sl->k/2);
-    int offset = 0;
+    int offset;
     int i, j;
 
     for (i = 0; i < sl->n; i++) {
@@ -70,6 +68,7 @@ void populaSL(SL *sl) {
     }
 }
 
+
 void copiaSL(SL *slDest, SL *slOrigin) {
     slDest->n = slOrigin->n;
     slDest->k = slOrigin->k;
@@ -79,29 +78,25 @@ void copiaSL(SL *slDest, SL *slOrigin) {
 }
 
 
-/*!
- \brief Função que imprime o sistema linear k-diagonal
- \param sl Ponteiro para o SL a ser impresso
- */
-void imprimeSL(SL *sl) {
+void imprimeSL(SL *sl, FILE *fp) {
     for (int i = 0; i < sl->n; i++) {
+        for (int k = floor(sl->k/2); k < i; k++)
+            fprintf(fp, "         ");
+
         for (int j = 0; j < sl->k; j++) {
-            printf("%f ", sl->A[i*sl->k + j]);
+            fprintf(fp, "%f ", sl->A[i*sl->k + j]);
         }
-        printf("\n");
+        fprintf(fp, "\n");
     }
 
     for (int i = 0; i < sl->n; i++) {
-        printf("%f ", sl->b[i]);
+        fprintf(fp, "%f ", sl->b[i]);
     }
 
-    printf("\n\n");
+    fprintf(fp, "\n\n");
 }
 
-/*!
- \brief Função que desaloca o sistema linear k-diagonal
- \param sl Ponteiro para o SL a ser desalocado
- */
+
 void destroiSL(SL *sl) {
     free(sl->A);
     free(sl->b);

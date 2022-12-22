@@ -86,38 +86,29 @@ int main(int argc, char *argv[]) {
 
     SL *sl = alocaSL(n, k);
     populaSL(sl);
-    double *x = (double *) calloc(n, sizeof(double));
-
-    imprimeSL(sl);
 
     SL *slT = alocaSL(n, k);
-
-    
     copiaSL(slT, sl);
-    
-    imprimeSL(slT);
-
     obtemMatrizTransposta(slT);
 
-    imprimeSL(slT);
+    SL *slA = multiplicaMatrizSL(slT, sl);
 
-    // SL *slA = simetrizaSL(slT, sl);
+    double *x = (double *) calloc(n, sizeof(double));
 
+    if (p == 0) {
+        gradienteConjugado(slA, x, e, i, fp);
+    } else {
+        preCondicionado(slA, x, e, i, fp);
+    }
 
-    // if (p == 0) {
-    //     gradienteConjugado(slA, x, e, i, fp);
-    // } else {
-    //     preCondicionado(slA, x, e, i, fp);
-    // }
-
-    // fprintf(fp, "#\n");
-    // fprintf(fp, "%d\n", n);
-    // imprimeVetor(x, n, fp);
+    fprintf(fp, "#\n");
+    fprintf(fp, "%d\n", n);
+    imprimeVetor(x, n, fp);
 
     free(x);
     destroiSL(sl);
     destroiSL(slT);
-    // destroiSL(slA);
+    destroiSL(slA);
 
     fclose(fp);
     return 0;

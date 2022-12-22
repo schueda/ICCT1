@@ -4,40 +4,18 @@
 #include <time.h>
 #include "utils.h"
 
-void imprimeVetor(double *v, int n, FILE *fp) {
-    for (int i = 0; i < n; i++) {
-        fprintf(fp, "%f ", v[i]);
-    }
-    fprintf(fp, "\n");
-}
 
-void imprimeVetorTeste(double *v, int n) {
-    for (int i = 0; i < n; i++) {
-        printf("%f ", v[i]);
-    }
-    printf("\n");
-}
+/*!
+ \brief Função que simplifica o acesso ao valor de um elemento da matriz A,
+        permitindo que a matriz seja acessada como se fosse uma matriz normal.
+        Para valores fora do escopo da matriz é retornado o valor 0.
 
-void multiplicaDiagVetor(double *matrizDiag, double *v, double *dest, int n) {
-    for (int i = 0; i < n; i++) {
-        dest[i] = matrizDiag[i] * v[i];
-    }
-}
+ \param sl Ponteiro para o sistema linear que contém a matriz A.
+ \param i Coordenada i do elemento a ser acessado.
+ \param j Coordenada j do elemento a ser acessado.
 
-void calculaMInv(SL *sl, double *cInv) {
-    int posDiag = 0;
-
-    int i;
-    // for (i = 0; i < (int) floor((double) sl->k/2); i++) {
-    //     cInv[i] = 1/sl->A[i][posDiag];
-    //     posDiag++;
-    // }
-
-    // for (i = (int) floor((double) sl->k/2); i < sl->n; i++) {
-    //     cInv[i] = 1/sl->A[i][posDiag];
-    // }
-}
-
+ \return Valor do elemento Aij.
+*/
 double valorNaMatriz(SL *sl, int i, int j) {
     int offset;
 
@@ -52,98 +30,184 @@ double valorNaMatriz(SL *sl, int i, int j) {
 
     if (j - offset < 0) return 0;
 
-    // return sl->A[i][j-offset];
+    return sl->A[i*sl->k + j-offset];
 }
 
-void obtemColuna(SL *sl, int j, int ini, int fim, double *dest) {
-    int i;
-    for (i = ini; i <= fim; i++) {
-        dest[i-ini] = valorNaMatriz(sl, i, j);;
+
+/*!
+ \brief Função que simplifica o acesso ao endereço de um elemento da matriz A,
+        permitindo que a matriz seja acessada como se fosse uma matriz normal.
+        Para valores fora do escopo da matriz é retornado NULL.
+
+ \param sl Ponteiro para o sistema linear que contém a matriz A.
+ \param i Coordenada i do elemento a ser acessado.
+ \param j Coordenada j do elemento a ser acessado.
+
+ \return Endereço do elemento Aij.
+*/
+double *itemNaMatriz(SL *sl, int i, int j) {
+    int offset;
+
+    int tam_linha = ceil((double) sl->k/2);
+    tam_linha = MIN(tam_linha + i, sl->k);
+    tam_linha = MIN(tam_linha, sl->n-1 - i + ceil((double) sl->k/2));
+
+
+    offset = MAX(i - (int) floor((double) sl->k/2), 0);
+
+    if (j - offset >= tam_linha) return NULL;
+
+    if (j - offset < 0) return NULL;
+
+    return &sl->A[i*sl->k + j-offset];
+}
+
+
+/*!
+ \brief Função que copia uma linha da matriz A do sl ao vetor dest.
+
+ \param sl Ponteiro para o sistema linear que contém a matriz A.
+ \param i Coordenada i da linha a ser copiada.
+ \param dest Vetor que receberá a linha.
+*/
+void obtemLinha(SL *sl, int i, double *dest) {
+    int j;
+    for (j = 0; j < sl->k; j++) {
+        dest[j] = sl->A[i*sl->k + j];
     }
 }
 
-SL *simetrizaSL(SL *slA, SL *slB) {
-    int tam_linha, tam_coluna, i, j;
-    int offset, resultOffset = 0;
 
-    SL *slDest = alocaSL(slA->n, slA->k + (int) 2 * floor((double) slA->k/2));
-    double *col = (double *) calloc(slB->k, sizeof(double));
+/*!
+ \brief Função que copia uma coluna da matriz A do sl ao vetor dest.
 
-    tam_linha = ceil((double) slDest->k/2);
-    tam_coluna = ceil((double) slB->k/2);
+ \param sl Ponteiro para o sistema linear que contém a matriz A.
+ \param j Coordenada j da coluna a ser copiada.
+ \param ini Coordenada i inicial da coluna a ser copiada.
+ \param fim Coordenada i final da coluna a ser copiada.
+ \param dest Vetor que receberá a coluna.
+*/
+void obtemColuna(SL *sl, int j, int ini, int fim, double *dest) {
+    int i;
+    for (i = ini; i <= fim; i++) {
+        dest[i-ini] = valorNaMatriz(sl, i, j);
+    }
+}
 
 
-    // for (i = 0; i < (int) floor((double) slDest->k/2); i++) {
-    //     for (j = 0; j < tam_linha; j++) {
-    //         obtemColuna(slB, j, 0, tam_coluna-1, col);
 
-    //         slDest->A[i][j] = multiplicaVetores(slA->A[i], col, tam_linha);
-    //     }
-    //     tam_linha++;
-    //     tam_coluna++;
-    // }
+void imprimeVetor(double *v, int n, FILE *fp) {
+    for (int i = 0; i < n; i++) {
+        fprintf(fp, "%f ", v[i]);
+    }
+    fprintf(fp, "\n");
+}
 
-    // for (i = (int) floor((double) slDest->k/2); i < slDest->n - (int) floor((double) slDest->k/2); i++) {
-    //     offset = i - (int) floor((double) slA->k/2);
-    //     for (j = 0; j < slDest->k; j++) {
-    //         obtemColuna(slB, j + resultOffset, offset, offset + slA->k-1, col);
 
-    //         slDest->A[i][j] = multiplicaVetores(slA->A[i], col, slA->k);
-    //     };
-    //     resultOffset++;
-    // }
+void imprimeVetorTeste(double *v, int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%f ", v[i]);
+    }
+    printf("\n");
+}
 
-    // tam_linha--;
-    // tam_coluna--;
-    // for (i = slDest->n - (int) floor((double) slDest->k/2); i < slDest->n; i++) {
-    //     offset = i - (int) floor((double) slA->k/2);
-    //     for (j = 0; j < tam_linha; j++) {
-    //         obtemColuna(slB, j + resultOffset, offset, offset + tam_coluna-1, col);
 
-    //         slDest->A[i][j] = multiplicaVetores(slA->A[i], col, tam_coluna);
-    //     }
-    //     tam_linha--;
-    //     tam_coluna--;
-    //     resultOffset++;
-    // }
+void multiplicaDiagVetor(double *matrizDiag, double *v, double *dest, int n) {
+    for (int i = 0; i < n; i++) {
+        dest[i] = matrizDiag[i] * v[i];
+    }
+}
+
+
+void calculaMInv(SL *sl, double *mInv) {
+    int j = 0;
+
+    int i;
+    for (i = 0; i < (int) floor((double) sl->k/2); i++) {
+        mInv[i] = 1/sl->A[i*sl->k + j];
+        j++;
+    }
+
+    for (i = (int) floor((double) sl->k/2); i < sl->n; i++) {
+        mInv[i] = 1/sl->A[i*sl->k + j];
+    }
+}
+
+
+void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
+    int tam_linha = ceil((double) sl->k/2);
+    int i, j, offset;
+
+    for (i = 0; i < sl->n; i++) {
+        offset = MAX(i - (int) floor((double) sl->k/2), 0);
+        dest[i] = 0;
+        for (j = 0; j < sl->k; j++) {
+            dest[i] += sl->A[i*sl->k + j] * v[j+offset];
+        }
+    }
+}
+
+
+void obtemMatrizTransposta(SL *sl) {
+    double *sup, *inf;
+
+    double aux;
+    int i, j;
+    int tam_linha;
+
+    for (i = 0; i < sl->n; i++) {
+        tam_linha = MIN(floor((double) sl->k/2), sl->n-1 - i);
+
+        for (j = i+1; j < i+1 + tam_linha; j++) {
+            sup = itemNaMatriz(sl, i, j);
+            inf = itemNaMatriz(sl, j, i);
+
+            if (sup != NULL && inf != NULL) {
+                aux = *sup;
+                *sup = *inf;
+                *inf = aux;
+            }
+        }
+    }
+}
+
+
+SL *multiplicaMatrizSL(SL *slA, SL *slB) {
+    int tam_linha, i, j;
+    int offset, resultOffset;
+
+    int k = slA->k;
+    int n = slA->n;
+    int newK = 2 * k - 1;
+
+    SL *slDest = alocaSL(n, newK);
+
+    double *lin = (double *) calloc(k, sizeof(double));
+    double *col = (double *) calloc(k, sizeof(double));
+
+
+    tam_linha = ceil((double) newK/2);
+
+    for (i = 0; i < n; i++) {
+        offset = MAX(0, i - (int) floor((double) k/2));
+        resultOffset = MAX(0, i - (int) floor((double) newK/2));
+
+        for (j = 0; j < newK; j++) {
+            obtemLinha(slA, i, lin);
+            obtemColuna(slB, j + resultOffset, offset, offset + k-1, col);
+
+            slDest->A[i*newK + j] = multiplicaVetores(lin, col, k);
+        }
+    }
 
     multiplicaMatrizVetor(slA, slB->b, slDest->b);
 
+    free(lin);
     free(col);
 
     return slDest;
 }
 
-void multiplicaMatrizVetor(SL *sl, double *v, double *dest) {
-    int tam_linha = ceil((double) sl->k/2);
-    int i, j, offset;
-    // for (i = 0; i < (int) floor((double) sl->k/2); i++) {
-    //     dest[i] = 0;
-    //     for (j = 0; j < tam_linha; j++) {
-    //         dest[i] += sl->A[i][j] * v[j];
-    //     }
-    //     tam_linha++;
-    // }
-
-    // offset = 0;
-    // for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
-    //     dest[i] = 0;
-    //     for (j = 0; j < sl->k; j++) {
-    //         dest[i] += sl->A[i][j] * v[j+offset];
-    //     }
-    //     offset++;
-    // }
-
-    // tam_linha--;
-    // for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
-    //     dest[i] = 0;
-    //     for (j = 0; j < tam_linha; j++) {
-    //         dest[i] += sl->A[i][j] * v[j+offset];
-    //     }
-    //     tam_linha--;
-    //     offset++;
-    // }
-}
 
 double multiplicaVetores(double *v1, double *v2, int n) {
     double soma = 0;
@@ -153,86 +217,20 @@ double multiplicaVetores(double *v1, double *v2, int n) {
     return soma;
 }
 
-double *itemNaMatriz(SL *sl, int i, int j) {
+
+void calculaResiduo(SL *sl, double *x, double *r) {
+    int i, j;
     int offset;
 
-    if (i < (int) floor((double) sl->k/2)) {
-        return &sl->A[i*sl->k + j];
-    }
-
-    offset = i - (int) floor((double) sl->k/2);
-    return &sl->A[i*sl->k + j-offset];
-}
-
-void obtemMatrizTransposta(SL *sl) {
-    double *sup, *inf;
-
-    double aux;
-    int i, j;
-    int dec = 1;
-
-
-    for (i = 0; i < sl->n - (int) floor((double) sl->k/2); i++) {
-        for (j = i + 1; j < i+1 + (int) floor((double) sl->k/2); j++) {
-            sup = itemNaMatriz(sl, i, j);
-            inf = itemNaMatriz(sl, j, i);
-
-            aux = *sup;
-            *sup = *inf;
-            *inf = aux;
+    for (i = 0; i<sl->n; i++) {
+        offset = MAX(i - (int) floor((double) sl->k/2), 0);
+        r[i] = sl->b[i];
+        for (j = 0; j < sl->k; j++) {
+            r[i] -= sl->A[i*sl->k + j] * x[j+offset];
         }
     }
-
-    for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
-        for (j = i+1; j < i+1 + (int) floor((double) sl->k/2) - dec; j++) {
-            sup = itemNaMatriz(sl, i, j);
-            inf = itemNaMatriz(sl, j, i);
-
-            aux = *sup;
-            *sup = *inf;
-            *inf = aux;
-        }
-        dec++;
-    }
-
 }
 
-/*!
- \brief Função que calcula o residuo de um sistema linear k-diagonal
- \param sl Sistema linear
- \param x Vetor solução do sistema linear
- \param r Vetor que receberá os valores do resíduo do sistema linear
-*/
-void calculaResiduo(SL *sl, double *x, double *r) {
-    int tam_linha = ceil((double) sl->k/2), i, j, offset;
-
-    // for (i = 0; i < (int) floor((double) sl->k/2); i++) {
-    //     r[i] = sl->b[i];
-    //     for (j = 0; j < tam_linha; j++) {
-    //         r[i] -= sl->A[i][j] * x[j];
-    //     }
-    //     tam_linha++;
-    // }
-
-    // offset = 0;
-    // for (i = (int) floor((double) sl->k/2); i < sl->n - (int) floor((double) sl->k/2); i++) {
-    //     r[i] = sl->b[i];
-    //     for (j = 0; j < sl->k; j++) {
-    //         r[i] -= sl->A[i][j] * x[j + offset];
-    //     }
-    //     offset++;
-    // }
-
-    // tam_linha--;
-    // for (i = sl->n - (int) floor((double) sl->k/2); i < sl->n; i++) {
-    //     r[i] = sl->b[i];
-    //     for (j = 0; j < tam_linha; j++) {
-    //         r[i] -= sl->A[i][j] * x[j + offset];
-    //     }
-    //     tam_linha--;
-    //     offset++;
-    // }
-}
 
 double calculaNormaEuclidiana(double *v, int n) {
     double soma = 0;
@@ -241,6 +239,7 @@ double calculaNormaEuclidiana(double *v, int n) {
     }
     return sqrt(soma);
 }
+
 
 double calculaNormaMax(double *v1, double *v2, int n) {
     double max = 0.0;
@@ -253,6 +252,7 @@ double calculaNormaMax(double *v1, double *v2, int n) {
     }
     return max;
 }
+
 
 double calculaNormaMaxRelativa(double *v1, double *v2, int n) {
     double max = 0.0;

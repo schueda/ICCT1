@@ -74,6 +74,7 @@ void gradienteConjugado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     free(rProx);
 }
 
+
 void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
     int k = 0, tam_linha, offset, i, j;
 
@@ -133,7 +134,7 @@ void preCondicionado(SL *sl, double *x, double erro, int maxIt, FILE *fp) {
 
         k++;
 
-        fprintf(fp, "# iter %d: %.15g\n", k, calculaNormaMaxRelativa(xProx, x, sl->n));
+        fprintf(fp, "# iter %d: %.15g\n", k, calculaNormaMax(xProx, x, sl->n));
         memcpy(x, xProx, sl->n * sizeof(double));
 
         timeSum += timeStampF - timeStampI;
