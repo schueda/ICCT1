@@ -1,3 +1,5 @@
+// Autores: André Schueda Menezes e Marcus Augusto Ferreira Dudeque
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

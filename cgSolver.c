@@ -1,3 +1,5 @@
+// Autores: André Schueda Menezes e Marcus Augusto Ferreira Dudeque
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

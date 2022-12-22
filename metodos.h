@@ -1,3 +1,5 @@
+// Autores: André Schueda Menezes e Marcus Augusto Ferreira Dudeque
+
 #ifndef __METODOS_H__
 #define __METODOS_H__
 
